@@ -8,15 +8,17 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDelegate {
 
     var tasks = [String]()
+    var didTap = true
     
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self as UITableViewDataSource
+        tableView.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,6 +30,7 @@ class ViewController: UIViewController {
         if tasks.contains(textField.text!) {
             let idx = tasks.index(of: textField.text!)
             let indexPath = IndexPath(row: idx!, section: 0)
+            didTap = false
             tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
             tableView.delegate?.tableView!(tableView, didSelectRowAt: indexPath)
             
@@ -56,5 +59,12 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if didTap {
+            print("Section: \(indexPath.section) and Row: \(indexPath.row)")
+            tasks.remove(at: indexPath.row)
+            tableView.reloadData()
+        }
+        didTap = true
+    }
 }
